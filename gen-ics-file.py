@@ -1,6 +1,7 @@
 from ics import Calendar
 import requests
 import validators
+import boto3
 
 def get_url():
   default_url = "https://www.skysports.com/calendars/football/fixtures/teams/birmingham-city"
@@ -13,6 +14,7 @@ def get_url():
 url = get_url()
 ics_file = requests.get(url).text
 c = Calendar(ics_file)
+s3 = boto3.client('s3')
 
 def modify_event(event):
   event.name = 'BCFC Home Game'
@@ -21,7 +23,11 @@ def modify_event(event):
 
 c.events = {modify_event(event) for event in c.events if "St. Andrew's Stadium" in event.location}
 
-open('./generated.ics', 'w').writelines(c.serialize_iter())
+bucket='gen-ics-file-bucket'
+fileName= 'generated.ics'
+uploadByteStream = bytes(c.serialize_iter())
+s3.put_object(Bucket=bucket, Key=fileName, Body=uploadByteStream)
+
 
 print("SUCCESS: ICS file has been generated in this directory with the filename 'generated.ics'")
 
