@@ -1,15 +1,14 @@
-import downloader
-import uploader
+import downloader, processor, uploader
 
 class CalendarGenerator:
-   def __init__(self, downloader: downloader.Downloader, uploader: uploader.Uploader):
+   def __init__(self, downloader: downloader.Downloader, processor: processor.Processor, uploader: uploader.Uploader):
       self.downloader = downloader
+      self.processor = processor
       self.uploader = uploader
    
    def generate(self):
-      self.downloader.download()
-      self.uploader.upload()
+      self.uploader.upload(self.processor.process(self.downloader.download()))
 
 if __name__ == "__main__":
-    calendarGenerator = CalendarGenerator(downloader.SkySportsDownloader(), uploader.NetlifyUploader())
+    calendarGenerator = CalendarGenerator(downloader.SkySportsDownloader(), processor.FilterProcessor(), uploader.NetlifyUploader())
     calendarGenerator.generate()
