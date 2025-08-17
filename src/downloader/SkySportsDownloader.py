@@ -1,4 +1,4 @@
-import Downloader
+from .Downloader import *
 
 class SkySportsDownloader(Downloader):
     def __init__(self):
