@@ -19,7 +19,7 @@ def main():
     url = get_url()
     ics_file = requests.get(url).text
     cal = Calendar(ics_file)
-    cal.events = {modify_event(event) for event in c.events if "St. Andrew's Stadium" in event.location}
+    cal.events = {modify_event(event) for event in cal.events if "St. Andrew's Stadium" in event.location}
     bucket='gen-ics-file-bucket'
     fileName= 'generated.ics'
     uploadByteStream = bytes(cal.serialize_iter())
