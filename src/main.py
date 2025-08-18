@@ -10,5 +10,5 @@ class CalendarGenerator:
       self.uploader.upload(self.processor.process(self.downloader.download()))
 
 if __name__ == "__main__":
-    calendarGenerator = CalendarGenerator(downloader.SkySportsDownloader(), processor.RemoveHomeProcessor(), uploader.NetlifyUploader())
+    calendarGenerator = CalendarGenerator(downloader.SkySportsDownloader(), processor.RemoveHomeProcessor(), uploader.FileSystemUploader())
     calendarGenerator.generate()
