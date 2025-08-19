@@ -1,4 +1,5 @@
 import downloader, processor, uploader
+from dotenv import load_dotenv
 
 class CalendarGenerator:
    def __init__(self, downloader: downloader.Downloader, processor: processor.Processor, uploader: uploader.Uploader):
@@ -10,5 +11,6 @@ class CalendarGenerator:
       self.uploader.upload(self.processor.process(self.downloader.download()))
 
 if __name__ == "__main__":
-    calendarGenerator = CalendarGenerator(downloader.SkySportsDownloader(), processor.RemoveHomeProcessor(), uploader.FileSystemUploader())
+    load_dotenv("./.env")
+    calendarGenerator = CalendarGenerator(downloader.SkySportsDownloader(), processor.RemoveHomeProcessor(), uploader.NetlifyUploader())
     calendarGenerator.generate()

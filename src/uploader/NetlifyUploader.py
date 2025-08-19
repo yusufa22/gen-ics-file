@@ -1,9 +1,71 @@
 from .Uploader import *
+import requests, hashlib, os
 
 class NetlifyUploader():
-    def upload(self, calendar):
-      open('./generated.ics', 'w').writelines(calendar.serialize_iter())
-      print("SUCCESS: ICS file has been generated in this directory with the filename 'generated.ics'")
 
-#create new netlify site 
-#create new netlify deploy 
+    def __init__(self):
+      self.requestsHeader = {
+        "Authorization": f"Bearer {os.environ.get('NETLIFY_TOKEN')}",
+        "Content-Type": "application/json"
+      }
+    
+    @staticmethod
+    def checkRequestStatus(response):
+      try:
+       response.raise_for_status()
+       return True
+      except requests.exceptions.HTTPError as e:
+       print("Error:", e)
+       return False
+    
+    def checkNetlifySiteExists(self, siteDomain):
+      url = f"https://api.netlify.com/api/v1/sites/{siteDomain}"
+      response = requests.get(url=url, headers=self.requestsHeader)
+      return self.checkRequestStatus(response)
+
+    def createNetlifySite(self, siteName):
+      url = "https://api.netlify.com/api/v1/sites"
+      body = {
+        "name": siteName
+      }
+      response = requests.post(url=url, headers=self.requestsHeader, json=body)
+      return self.checkRequestStatus(response)
+    
+    
+    def createNetlifyDeployment(self, siteDomain, fileName, fileContents):
+        url = f"https://api.netlify.com/api/v1/sites/{siteDomain}/deploys"
+        fileContentsHash = hashlib.sha1(fileContents.encode("utf-8")).hexdigest()
+        body = {"files": {fileName: fileContentsHash}}
+        response = requests.post(url, headers=self.requestsHeader, json=body)
+        if not self.checkRequestStatus(response):
+            return False
+
+        responseData = response.json()
+        if fileContentsHash not in responseData.get("required", {}):
+          return True
+        url = f"https://api.netlify.com/api/v1/deploys/{responseData['id']}/files/{fileName}"
+        Header = {
+          "Authorization": f"Bearer {os.environ.get('NETLIFY_TOKEN')}",
+          "Content-Type": "text/calendar"
+        }
+        response = requests.put(url, headers=Header, data=fileContents.encode("utf-8"))
+        return self.checkRequestStatus(response)
+        
+      
+    def upload(self, calendarObject):
+      calendarString = calendarObject.serialize()
+      siteName = "gencal"
+      siteDomain = f"{siteName}.netlify.app"
+      if self.checkNetlifySiteExists(siteDomain) == False:
+        self.createNetlifySite(siteName)
+      self.createNetlifyDeployment(siteDomain, "gencal.ics", calendarString)
+      print("Netlify Upload successful")
+      
+
+
+# check site exists
+# check request went through successfully
+# create new site 
+# check request went through successfully
+# create new deploy 
+# check request went through successfully
