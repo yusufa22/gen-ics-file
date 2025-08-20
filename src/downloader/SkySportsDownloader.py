@@ -1,4 +1,6 @@
 from .Downloader import *
+import requests
+from ics import Calendar
 
 class SkySportsDownloader(Downloader):
     def __init__(self):
