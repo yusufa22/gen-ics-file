@@ -12,5 +12,12 @@ class CalendarGenerator:
 
 if __name__ == "__main__":
     load_dotenv("./.env")
-    calendarGenerator = CalendarGenerator(downloader.SkySportsDownloader(), processor.RemoveHomeProcessor(), uploader.NetlifyUploader())
+    calendarGenerator = CalendarGenerator(
+       downloader.SkySportsDownloader(), 
+       processor.CompositeProcessor([
+          processor.AlterMetaDataProcessor(), 
+          processor.RemoveHomeProcessor()
+          ]), 
+       uploader.NetlifyUploader()
+       )
     calendarGenerator.generate()
