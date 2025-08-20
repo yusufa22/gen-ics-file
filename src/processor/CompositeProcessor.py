@@ -1,6 +1,7 @@
 from .Processor import Processor
 
 class CompositeProcessor(Processor):
+    
     def __init__(self, *processors):
         self.processors = processors
 

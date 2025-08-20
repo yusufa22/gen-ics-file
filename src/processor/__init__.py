@@ -1,4 +1,4 @@
 from .Processor import *
-from .RemoveHomeProcessor import *
+from .RemoveAwayGamesProcessor import *
 from .AlterMetaDataProcessor import *
 from .CompositeProcessor import *

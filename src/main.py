@@ -16,8 +16,8 @@ if __name__ == "__main__":
        downloader.SkySportsDownloader(), 
        processor.CompositeProcessor(
           processor.AlterMetaDataProcessor(), 
-          processor.RemoveHomeProcessor()
+          processor.RemoveAwayGamesProcessor()
           ), 
-       uploader.NetlifyUploader()
+       uploader.FileSystemUploader()
        )
     calendarGenerator.generate()

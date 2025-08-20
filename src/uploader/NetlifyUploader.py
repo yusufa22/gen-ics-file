@@ -10,7 +10,7 @@ class NetlifyUploader():
       }
     
     @staticmethod
-    def checkRequestStatus(response):
+    def RequestIsSuccessful(response):
       try:
        response.raise_for_status()
        return True
@@ -18,10 +18,10 @@ class NetlifyUploader():
        print("Error:", e)
        return False
     
-    def checkNetlifySiteExists(self, siteDomain):
+    def NetlifySiteExists(self, siteDomain):
       url = f"https://api.netlify.com/api/v1/sites/{siteDomain}"
       response = requests.get(url=url, headers=self.requestsHeader)
-      return self.checkRequestStatus(response)
+      return self.RequestIsSuccessful(response)
 
     def createNetlifySite(self, siteName):
       url = "https://api.netlify.com/api/v1/sites"
@@ -29,7 +29,7 @@ class NetlifyUploader():
         "name": siteName
       }
       response = requests.post(url=url, headers=self.requestsHeader, json=body)
-      return self.checkRequestStatus(response)
+      return self.RequestIsSuccessful(response)
     
     
     def createNetlifyDeployment(self, siteDomain, fileName, fileContents):
@@ -37,7 +37,7 @@ class NetlifyUploader():
         fileContentsHash = hashlib.sha1(fileContents.encode("utf-8")).hexdigest()
         body = {"files": {fileName: fileContentsHash}}
         response = requests.post(url, headers=self.requestsHeader, json=body)
-        if not self.checkRequestStatus(response):
+        if not self.RequestIsSuccessful(response):
             return False
 
         responseData = response.json()
@@ -49,23 +49,15 @@ class NetlifyUploader():
           "Content-Type": "text/calendar"
         }
         response = requests.put(url, headers=Header, data=fileContents.encode("utf-8"))
-        return self.checkRequestStatus(response)
+        return self.RequestIsSuccessful(response)
         
       
     def upload(self, calendarObject):
-      calendarString = calendarObject.serialize()
+      icsFileContents = calendarObject.serialize()
       siteName = "gencal"
       siteDomain = f"{siteName}.netlify.app"
-      if self.checkNetlifySiteExists(siteDomain) == False:
+      if self.NetlifySiteExists(siteDomain) == False:
         self.createNetlifySite(siteName)
-      self.createNetlifyDeployment(siteDomain, "gencal.ics", calendarString)
+      self.createNetlifyDeployment(siteDomain, "gencal.ics", icsFileContents)
       print("Netlify Upload successful")
       
-
-
-# check site exists
-# check request went through successfully
-# create new site 
-# check request went through successfully
-# create new deploy 
-# check request went through successfully
