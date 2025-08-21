@@ -3,11 +3,10 @@ import requests, hashlib, os
 
 class NetlifyUploader():
 
-    def __init__(self):
-      self.requestsHeader = {
+    requestsHeader = {
         "Authorization": f"Bearer {os.environ.get('NETLIFY_TOKEN')}",
         "Content-Type": "application/json"
-      }
+        }
     
     @staticmethod
     def RequestIsSuccessful(response):
