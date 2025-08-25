@@ -4,19 +4,19 @@ import datetime
 
 class AddStubEventProcessor(Processor):
 
-    def createEvent(self, name, datetime):
+    def createEvent(self, name, time):
         event = Event()
         event.name = name
-        event.begin = datetime
+        event.begin = time
         return event
 
     def process(self, calendar):
         currentDateTime = datetime.datetime.now()
-        eventsToAdd = 48 - 1
-        eventNumber = 0
+        eventsToAdd = 1440
+        eventNumber = 1
         for event in range(eventsToAdd):
-            eventTime = currentDateTime + datetime.timedelta(hours=eventNumber)
-            event = self.createEvent(name="Test Event", datetime=eventTime)
+            eventTime = currentDateTime + datetime.timedelta(minutes=eventNumber)
+            event = self.createEvent(name=f"Test Event {eventNumber}", time=eventTime)
             calendar.events.add(event)
             eventNumber = eventNumber + 1
         return calendar
