@@ -19,8 +19,8 @@ if __name__ == "__main__":
        processor.CompositeProcessor(
           processor.AlterMetaDataProcessor(), 
           processor.RemoveAwayGamesProcessor(),
-          processor.AddStubEventProcessor() if isTestRun else processor.DoNothingProcessor()
+          processor.AddStubEventProcessor()
           ), 
-       uploader.FileSystemUploader() if isTestRun else uploader.NetlifyUploader()
+       uploader.FileSystemUploader() if isTestRun else uploader.CompositeUploader(uploader.FileSystemUploader(),uploader.NetlifyUploader()) 
        )
     calendarGenerator.generate()
