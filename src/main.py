@@ -13,13 +13,14 @@ class CalendarGenerator:
 
 if __name__ == "__main__":
     load_dotenv("./.env")
-    uploaderType = uploader.FileSystemUploader if sys.argv[1] == "test" else uploader.NetlifyUploader
+    isTestRun = True if sys.argv[1] == "test" else False
     calendarGenerator = CalendarGenerator(
        downloader.SkySportsDownloader(), 
        processor.CompositeProcessor(
           processor.AlterMetaDataProcessor(), 
-          processor.RemoveAwayGamesProcessor()
+          processor.RemoveAwayGamesProcessor(),
+          processor.AddStubEventProcessor() if isTestRun else processor.DoNothingProcessor()
           ), 
-       uploaderType()
+       uploader.FileSystemUploader() if isTestRun else uploader.NetlifyUploader()
        )
     calendarGenerator.generate()
