@@ -19,7 +19,8 @@ if __name__ == "__main__":
        processor.CompositeProcessor(
           processor.AlterMetaDataProcessor(), 
           processor.RemoveAwayGamesProcessor(),
-          processor.AddStubEventProcessor()
+          processor.AddStubEventProcessor(),
+          processor.AddAlarmsProcessor()
           ), 
        uploader.FileSystemUploader() if isTestRun else uploader.CompositeUploader(uploader.FileSystemUploader(),uploader.NetlifyUploader()) 
        )
