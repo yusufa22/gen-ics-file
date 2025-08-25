@@ -1,0 +1,54 @@
+# name: gencal-workflow
+# on: 
+#     push:
+#         branches: 
+#             - main
+# jobs:
+#     build:
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: setup python
+#               uses: actions/setup-python
+
+#             - name: install dependencies
+#               run: pip3 install -r requirements.txt --break-system-packages
+#     release:
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: authenticate to AWS
+#               uses: aws-actions/configure-aws-credentials
+#               with:
+#                 aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#                 aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#                 aws-region: us-east-1   
+
+#             - name: log Docker CLI into AWS ECR
+#               uses: aws-actions/amazon-ecr-login
+            
+#             - name: build and publish container
+#               uses: docker/build-push-action
+#               with:
+#                 context: .
+#                 push: true
+#                 tags: ${{ secrets.ECR_REPO_URI }}/abox-project:${{ github.sha }}
+#     deploy:
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: setup terraform
+#               uses: hashicorp/setup-terraform
+
+#             - name: authenticate to AWS
+#               uses: aws-actions/configure-aws-credentials
+#               with:
+#                 aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#                 aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#                 aws-region: us-east-1
+
+#             - name: terraform validate
+#               run: terraform validate
+
+#             - name: terraform plan
+#               run: terraform plan
+              
+#             - name: terraform apply
+#               run: terraform apply
