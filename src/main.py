@@ -1,27 +1,18 @@
-import downloader, processor, uploader
+import pipeline, uploader
 from dotenv import load_dotenv
+from ics import Calendar
 import sys
 
-class CalendarGenerator:
-   def __init__(self, downloader: downloader.Downloader, processor: processor.Processor, uploader: uploader.Uploader):
-      self.downloader = downloader
-      self.processor = processor
-      self.uploader = uploader
-   
-   def generate(self):
-      self.uploader.upload(self.processor.process(self.downloader.download()))
-
-if __name__ == "__main__":
+def main():
     load_dotenv("./.env")
     isTestRun = True if sys.argv[1] == "test" else False
-    calendarGenerator = CalendarGenerator(
-       downloader.SkySportsDownloader(), 
-       processor.CompositeProcessor(
-          processor.AlterMetaDataProcessor(), 
-          processor.RemoveAwayGamesProcessor(),
-          #processor.AddStubEventProcessor(),
-          processor.AddAlarmsProcessor()
-          ), 
-       uploader.FileSystemUploader() if isTestRun else uploader.CompositeUploader(uploader.FileSystemUploader(),uploader.NetlifyUploader()) 
-       )
-    calendarGenerator.generate()
+    combinedCalendar = Calendar()
+    mufcFixturesPipeline = pipeline.MufcFixturesPipeline(sink=combinedCalendar)
+    stAndrewsFixturesPipeline = pipeline.StAndrewsFixturesPipeline(sink=combinedCalendar)
+    mufcFixturesPipeline.run()
+    stAndrewsFixturesPipeline.run()
+    fileSystemUploader = uploader.FileSystemUploader("generated.ics")
+    fileSystemUploader.upload(combinedCalendar)
+
+if __name__ == "__main__":
+    main()

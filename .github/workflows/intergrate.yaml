@@ -31,8 +31,8 @@
 #                 context: .
 #                 push: true
 #                 tags: 
-#                     ${{ secrets.ECR_REPO_URI }}/gencal:${{ github.sha }}
-#                     ${{ secrets.ECR_REPO_URI }}/gencal:latest
+#                     ${{ secrets.ECR_REPO_URI }}:${{ github.sha }}
+#                     ${{ secrets.ECR_REPO_URI }}:latest
 #     deploy:
 #         runs-on: ubuntu-latest
 #         steps:

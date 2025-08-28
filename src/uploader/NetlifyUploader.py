@@ -3,11 +3,12 @@ import requests, hashlib, os
 
 class NetlifyUploader():
 
-    def __init__(self):
+    def __init__(self, fileName):
       self.requestsHeader = {
         "Authorization": f"Bearer {os.environ.get('NETLIFY_TOKEN')}",
         "Content-Type": "application/json"
         }
+      self.fileName = fileName
     
     @staticmethod
     def RequestIsSuccessful(response):
@@ -58,6 +59,6 @@ class NetlifyUploader():
       siteDomain = f"{siteName}.netlify.app"
       if self.NetlifySiteExists(siteDomain) == False:
         self.createNetlifySite(siteName)
-      self.createNetlifyDeployment(siteDomain, "gencal.ics", icsFileContents)
+      self.createNetlifyDeployment(siteDomain, self.fileName, icsFileContents)
       print("SUCCESS: Netlify Upload successful")
       

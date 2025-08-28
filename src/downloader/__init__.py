@@ -1,2 +1,5 @@
 from .Downloader import *
-from .SkySportsDownloader import *
+from .SkyTeamFixtureDownloader import *
+from .CompositeDownloader import *
+from .NullDownloader import *
+from .InMemoryDownloader import *
